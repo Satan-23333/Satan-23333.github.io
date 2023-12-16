@@ -77,7 +77,7 @@ vlog -work work ./design/multiply.v ./design/testbench.v -l vcompile.txt
 Top level modules:
 	tb
 End time: 20:07:49 on Dec 01,2023, Elapsed time: 0:00:00
-Errors: 0, Warnings: 10
+Errors: 0, Warnings: 0
 ```
 
 ### 3.2 *Simulation Log*<p align="right">**Errors: 0, Warnings: 0**</p>
