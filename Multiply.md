@@ -1,6 +1,6 @@
 ---
 title: Multiply
-date: 2023-12-22 02:46:08
+date: 2023-12-22 03:00:31
 tags:
 ---
 ---
@@ -490,25 +490,25 @@ endmodule
 
 ```
 ---
-## 3 **Log**
+## 3 **Report**
 ---
-### 3.1 *Compile Log*<p align="right">**Errors: 0, Warnings: 0**</p>
+### 3.1 *Compile Report*<p align="right">**Errors: 0, Warnings: 0**</p>
 ```
 Model Technology ModelSim SE-64 vlog 10.7 Compiler 2017.12 Dec  7 2017
-Start time: 02:46:08 on Dec 22,2023
+Start time: 03:00:31 on Dec 22,2023
 vlog -work work ./design/multiply.v ./design/testbench.v -l vcompile.txt 
 -- Compiling module multiply
 -- Compiling module tb
 
 Top level modules:
 	tb
-End time: 02:46:08 on Dec 22,2023, Elapsed time: 0:00:00
+End time: 03:00:31 on Dec 22,2023, Elapsed time: 0:00:00
 Errors: 0, Warnings: 0
 ```
-### 3.2 *Simulation Log*<p align="right">**Errors: 0, Warnings: 0**</p>
+### 3.2 *Simulation Report*<p align="right">**Errors: 0, Warnings: 0**</p>
 ```
 # vsim -voptargs="+acc" work.tb -l ./vsim.txt -wlf ./vsim.wlf 
-# Start time: 02:46:08 on Dec 22,2023
+# Start time: 03:00:31 on Dec 22,2023
 # ** Note: (vsim-8009) Loading existing optimized design _opt2
 # //  ModelSim SE-64 10.7 Dec  7 2017
 # //
@@ -528,10 +528,10 @@ Errors: 0, Warnings: 0
 #  ------ERROR. A mismatch has occurred-----,ERROR in          40
 # 1 ERROR! See log above for details.
 # quit
-# End time: 02:46:08 on Dec 22,2023, Elapsed time: 0:00:00
+# End time: 03:00:31 on Dec 22,2023, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
 ```
-### 3.3 *TestBench Output*
+### 3.3 *TestBench Report*
 ```
  ------ERROR. A mismatch has occurred-----,ERROR in          40
 1 ERROR! See log above for details.
