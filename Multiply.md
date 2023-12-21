@@ -1,6 +1,6 @@
 ---
 title: Multiply
-date: 2023-12-22 03:00:31
+date: 2023-12-22 03:43:06
 tags:
 ---
 ---
@@ -489,27 +489,171 @@ module tb;
 endmodule
 
 ```
+### 2.3 *updated_design.v*
+``` Verilog
+
+`timescale 1ns / 1ps   
+
+module multiply(               
+    input         clk,        // Clock
+    input         mult_begin, // Begin multiply signal
+    input  [31:0] mult_op1,   // Multiplier operand 1
+    input  [31:0] mult_op2,   // Multiplier operand 2
+    output [63:0] product,    // Product
+    output        mult_end    // End multiply signal
+);
+
+    // Multiplier operation signals
+    reg mult_valid;  
+    reg [31:0] multiplier;  
+
+    assign mult_end = mult_valid & ~(|multiplier); // End signal: when multiplier is all zeros
+
+    // Handle mult_valid signal
+    always @(posedge clk) begin  
+        if (multiplier == 32'd0) begin  
+            mult_valid <= 1'b0; // No valid multiplication
+        end else begin  
+            mult_valid <= 1'b1; // Valid multiplication
+        end  
+    end  
+
+    // Absolute values of operands
+    wire        op1_sign;      // Sign bit of operand 1
+    wire        op2_sign;      // Sign bit of operand 2
+    wire [31:0] op1_absolute;  // Absolute value of operand 1
+    wire [31:0] op2_absolute;  // Absolute value of operand 2
+
+    assign op1_sign = mult_op1[31];  
+    assign op2_sign = mult_op2[31];  
+    assign op1_absolute = op1_sign ? (~mult_op1 + 1) : mult_op1;  
+    assign op2_absolute = op2_sign ? (~mult_op2 + 1) : mult_op2;  
+
+    // Multiplicand handling
+    reg [63:0] multiplicand;  
+    always @(posedge clk) begin  
+        if (mult_valid) begin  
+            multiplicand <= {multiplicand[62:0], 1'b0}; // Shift left
+        end else if (mult_begin) begin  
+            multiplicand <= {32'd0, op1_absolute}; // Load on start
+        end  
+    end  
+
+    // Multiplier handling
+    always @(posedge clk) begin  
+        if(mult_valid) begin  
+            multiplier <= {1'b0, multiplier[31:1]}; // Shift right
+        end else if(mult_begin) begin  
+            multiplier <= op2_absolute; // Load on start
+        end  
+    end  
+
+    // Partial product calculation
+    wire [63:0] partial_product;  
+    assign partial_product = multiplier[0] ? multiplicand : 64'd0; // If LSB of multiplier is 1
+
+    // Accumulator for the product
+    reg [63:0] product_temp;  
+    always @(posedge clk) begin  
+        if (mult_valid) begin  
+            product_temp <= product_temp + partial_product; // Accumulate
+        end else if (mult_begin) begin  
+            product_temp <= 64'd0; // Reset on start
+        end  
+    end  
+
+    // Product sign and final result
+    reg product_sign;  
+    always @(posedge clk) begin  
+        if (mult_valid) begin  
+            product_sign <= op1_sign ^ op2_sign; // Determine sign
+        end  
+    end   
+
+    assign product = product_sign ? (~product_temp + 1) : product_temp; // Handle negative result
+endmodule
+```
+### 2.4 *updated_tb.v*
+``` Verilog
+
+`timescale 1ns / 1ps
+
+module multiply_tb;
+
+    // Inputs
+    reg clk;
+    reg mult_begin;
+    reg [31:0] mult_op1;
+    reg [31:0] mult_op2;
+
+    // Outputs
+    wire [63:0] product;
+    wire mult_end;
+
+    // Instantiate the Unit Under Test (UUT)
+    multiply uut (
+        .clk(clk),
+        .mult_begin(mult_begin),
+        .mult_op1(mult_op1),
+        .mult_op2(mult_op2),
+        .product(product),
+        .mult_end(mult_end)
+    );
+
+    // Clock generation
+    always #5 clk = ~clk; // 100 MHz Clock
+
+    initial begin
+        // Initialize Inputs
+        clk = 0;
+        mult_begin = 0;
+        mult_op1 = 0;
+        mult_op2 = 0;
+
+        // Wait for the global reset
+        #100;
+        
+        // Start multiplication test cases
+        mult_begin = 1; mult_op1 = 32'd15; mult_op2 = 32'd3; #10; // Test case 1
+        mult_begin = 0; #50; // Wait for multiplication to complete
+        
+        mult_begin = 1; mult_op1 = 32'd4; mult_op2 = 32'd2; #10; // Test case 2
+        mult_begin = 0; #50; // Wait for multiplication to complete
+
+        // Add more test cases as needed
+
+        // Finish simulation
+        #100;
+        $finish;
+    end
+      
+endmodule
+```
 ---
 ## 3 **Report**
 ---
-### 3.1 *Compile Report*<p align="right">**Errors: 0, Warnings: 0**</p>
+### 3.1 *Compile Report*<p align="right">**Errors: 0, Warnings: 1**</p>
 ```
 Model Technology ModelSim SE-64 vlog 10.7 Compiler 2017.12 Dec  7 2017
-Start time: 03:00:31 on Dec 22,2023
-vlog -work work ./design/multiply.v ./design/testbench.v -l vcompile.txt 
+Start time: 03:43:05 on Dec 22,2023
+vlog -work work ./design/multiply.v ./design/testbench.v ./design/updated_design.v ./design/updated_tb.v -l vcompile.txt 
 -- Compiling module multiply
 -- Compiling module tb
+** Warning: ./design/updated_design.v(4): (vlog-2275) 'multiply' already exists and will be overwritten.
+-- Compiling module multiply
+-- Compiling module multiply_tb
 
 Top level modules:
 	tb
-End time: 03:00:31 on Dec 22,2023, Elapsed time: 0:00:00
-Errors: 0, Warnings: 0
+	multiply_tb
+End time: 03:43:05 on Dec 22,2023, Elapsed time: 0:00:00
+Errors: 0, Warnings: 1
 ```
 ### 3.2 *Simulation Report*<p align="right">**Errors: 0, Warnings: 0**</p>
 ```
 # vsim -voptargs="+acc" work.tb -l ./vsim.txt -wlf ./vsim.wlf 
-# Start time: 03:00:31 on Dec 22,2023
-# ** Note: (vsim-8009) Loading existing optimized design _opt2
+# Start time: 03:43:05 on Dec 22,2023
+# ** Note: (vsim-3813) Design is being optimized due to module recompilation...
 # //  ModelSim SE-64 10.7 Dec  7 2017
 # //
 # //  Copyright 1991-2017 Mentor Graphics Corporation
@@ -528,7 +672,7 @@ Errors: 0, Warnings: 0
 #  ------ERROR. A mismatch has occurred-----,ERROR in          40
 # 1 ERROR! See log above for details.
 # quit
-# End time: 03:00:31 on Dec 22,2023, Elapsed time: 0:00:00
+# End time: 03:43:06 on Dec 22,2023, Elapsed time: 0:00:01
 # Errors: 0, Warnings: 0
 ```
 ### 3.3 *TestBench Report*
