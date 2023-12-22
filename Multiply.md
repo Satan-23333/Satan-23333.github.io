@@ -1,6 +1,6 @@
 ---
 title: Multiply
-date: 2023-12-22 17:19:13
+date: 2023-12-22 17:26:46
 tags:
 ---
 ---
@@ -489,27 +489,108 @@ module tb;
 endmodule
 
 ```
+### 2.3 *updated_design.v*
+``` Verilog
+
+`timescale 1ns / 1ps   
+
+module multiply(               
+    input         clk,        // Clock
+    input         mult_begin, // Start of multiplication signal
+    input  [31:0] mult_op1,   // First operand
+    input  [31:0] mult_op2,   // Second operand
+    output [63:0] product,    // Product of multiplication
+    output        mult_end   // End of multiplication signal
+);  
+    // Multiplication operation signals
+    reg mult_valid;  
+    reg  [31:0] multiplier;  
+
+    assign mult_end = mult_valid & ~(|multiplier); // End signal when multiplier is all zeros
+    always @(posedge clk) begin  
+        if (multiplier == 32'd0) begin  
+            mult_valid <= 1'b0;  
+        end else begin  
+            mult_valid <= 1'b1;  
+        end  
+    end  
+
+    // Absolute values of operands
+    wire        op1_sign;      
+    wire        op2_sign;      
+    wire [31:0] op1_absolute;  
+    wire [31:0] op2_absolute;  
+    assign op1_sign = mult_op1[31];  
+    assign op2_sign = mult_op2[31];  
+    assign op1_absolute = op1_sign ? (~mult_op1 + 1) : mult_op1;  
+    assign op2_absolute = op2_sign ? (~mult_op2 + 1) : mult_op2;  
+
+    // Loading multiplicand, shift left on each clock when multiplying
+    reg  [63:0] multiplicand;  
+    always @(posedge clk) begin  
+        if (mult_valid) begin  
+            multiplicand <= {multiplicand[62:0], 1'b0};  
+        end else if (mult_begin) begin  
+            multiplicand <= {32'd0, op1_absolute};  
+        end  
+    end  
+
+    // Loading multiplier, shift right on each clock when multiplying
+    always @(posedge clk) begin  
+        if(mult_valid) begin  
+            multiplier <= {1'b0, multiplier[31:1]};  
+        end else if(mult_begin) begin  
+            multiplier <= op2_absolute;  
+        end  
+    end  
+
+    // Partial product calculation
+    wire [63:0] partial_product;  
+    assign partial_product = multiplier[0] ? multiplicand : 64'd0;  
+
+    // Accumulator for the product
+    reg [63:0] product_temp;  
+    always @(posedge clk) begin  
+        if (mult_valid) begin  
+            product_temp <= product_temp + partial_product;  
+        end else if (mult_begin) begin  
+            product_temp <= 64'd0;  
+        end  
+    end  
+
+    // Final product calculation
+    reg product_sign;  
+    always @(posedge clk) begin  
+        if (mult_valid) begin  
+            product_sign <= op1_sign ^ op2_sign;  
+        end  
+    end  
+    assign product = product_sign ? (~product_temp + 1) : product_temp;  
+endmodule  
+```
 ---
 ## 3 **Report**
 ---
-### 3.1 *Compile Report*<p align="right">**Errors: 0, Warnings: 0**</p>
+### 3.1 *Compile Report*<p align="right">**Errors: 0, Warnings: 1**</p>
 ```
 Model Technology ModelSim SE-64 vlog 10.7 Compiler 2017.12 Dec  7 2017
-Start time: 17:19:13 on Dec 22,2023
-vlog -work work ./design/multiply.v ./design/testbench.v -l vcompile.txt 
+Start time: 17:26:45 on Dec 22,2023
+vlog -work work ./design/multiply.v ./design/testbench.v ./design/updated_design.v -l vcompile.txt 
 -- Compiling module multiply
 -- Compiling module tb
+** Warning: ./design/updated_design.v(4): (vlog-2275) 'multiply' already exists and will be overwritten.
+-- Compiling module multiply
 
 Top level modules:
 	tb
-End time: 17:19:13 on Dec 22,2023, Elapsed time: 0:00:00
-Errors: 0, Warnings: 0
+End time: 17:26:45 on Dec 22,2023, Elapsed time: 0:00:00
+Errors: 0, Warnings: 1
 ```
 ### 3.2 *Simulation Report*<p align="right">**Errors: 0, Warnings: 0**</p>
 ```
 # vsim -voptargs="+acc" work.tb -l ./vsim.txt -wlf ./vsim.wlf 
-# Start time: 17:19:13 on Dec 22,2023
-# ** Note: (vsim-8009) Loading existing optimized design _opt2
+# Start time: 17:26:45 on Dec 22,2023
+# ** Note: (vsim-3813) Design is being optimized due to module recompilation...
 # //  ModelSim SE-64 10.7 Dec  7 2017
 # //
 # //  Copyright 1991-2017 Mentor Graphics Corporation
@@ -528,7 +609,7 @@ Errors: 0, Warnings: 0
 #  ------ERROR. A mismatch has occurred-----,ERROR in          40
 # 1 ERROR! See log above for details.
 # quit
-# End time: 17:19:13 on Dec 22,2023, Elapsed time: 0:00:00
+# End time: 17:26:46 on Dec 22,2023, Elapsed time: 0:00:01
 # Errors: 0, Warnings: 0
 ```
 ### 3.3 *TestBench Report*
