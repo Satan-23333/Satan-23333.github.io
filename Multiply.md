@@ -1,6 +1,6 @@
 ---
 title: Multiply
-date: 2023-12-25 01:59:38
+date: 2023-12-25 02:01:27
 tags:
 ---
 ---
@@ -109,13 +109,13 @@ module multiply(
      
     //乘法结果的符号位和乘法结果
     reg product_sign;	//乘积结果的符号
-    always @ (posedge clk)  
-    begin
-        if (mult_valid)
-        begin
-            //   product_sign <= op1_sign ^ op2_sign;
-        end
-    end 
+    // always @ (posedge clk)  
+    // begin
+    //     if (mult_valid)
+    //     begin
+    //           product_sign <= op1_sign ^ op2_sign;
+    //     end
+    // end 
     //若乘法结果为负数，则需要对结果取反+1
     
     assign product = product_sign ? (~product_temp+1) : product_temp;
@@ -452,7 +452,7 @@ module tb;
 		mult_begin = 1;
 		mult_op1 = 32'H00000000;
 		mult_op2 = 32'H6D0E5A16;
-		Data_in_t = 64'H0000000000000001;
+		Data_in_t = 64'H0000000000000000;
 		#50;
 		mult_begin = 0;
 
@@ -495,20 +495,20 @@ endmodule
 ### 3.1 *Compile Report*<p align="right">**Errors: 0, Warnings: 0**</p>
 ```
 Model Technology ModelSim SE-64 vlog 10.7 Compiler 2017.12 Dec  7 2017
-Start time: 01:59:37 on Dec 25,2023
+Start time: 02:01:26 on Dec 25,2023
 vlog -work work ./design/multiply.v ./design/testbench.v -l vcompile.txt 
 -- Compiling module multiply
 -- Compiling module tb
 
 Top level modules:
 	tb
-End time: 01:59:37 on Dec 25,2023, Elapsed time: 0:00:00
+End time: 02:01:27 on Dec 25,2023, Elapsed time: 0:00:01
 Errors: 0, Warnings: 0
 ```
 ### 3.2 *Simulation Report*<p align="right">**Errors: 0, Warnings: 0**</p>
 ```
 # vsim -voptargs="+acc" work.tb -l ./vsim.txt -wlf ./vsim.wlf 
-# Start time: 01:59:37 on Dec 25,2023
+# Start time: 02:01:27 on Dec 25,2023
 # ** Note: (vsim-3813) Design is being optimized due to module recompilation...
 # //  ModelSim SE-64 10.7 Dec  7 2017
 # //
@@ -525,14 +525,12 @@ Errors: 0, Warnings: 0
 # //
 # Loading work.tb(fast)
 # Loading work.multiply(fast)
-#  ------ERROR. A mismatch has occurred-----,ERROR in          40
-# 1 ERROR! See log above for details.
+# Simulation finished Successfully.
 # quit
-# End time: 01:59:37 on Dec 25,2023, Elapsed time: 0:00:00
+# End time: 02:01:27 on Dec 25,2023, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
 ```
 ### 3.3 *TestBench Report*
 ```
- ------ERROR. A mismatch has occurred-----,ERROR in          40
-1 ERROR! See log above for details.
+Simulation finished Successfully.
 ```
