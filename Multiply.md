@@ -1,6 +1,6 @@
 ---
 title: Multiply
-date: 2023-12-25 02:48:40
+date: 2023-12-25 09:50:51
 tags:
 ---
 ---
@@ -113,12 +113,12 @@ module multiply(
     begin
         if (mult_valid)
         begin
-            product_sign <= op1_sign ^ op2_sign;
+            // product_sign <= op1_sign ^ op2_sign;
         end
     end 
     //若乘法结果为负数，则需要对结果取反+1
     
-    // assign product = product_sign ? (~product_temp+1) : product_temp;
+    assign product = product_sign ? (~product_temp+1) : product_temp;
 endmodule
 ```
 ### 2.2 *testbench.v*
@@ -495,20 +495,20 @@ endmodule
 ### 3.1 *Compile Report*<p align="right">**Errors: 0, Warnings: 0**</p>
 ```
 Model Technology ModelSim SE-64 vlog 10.7 Compiler 2017.12 Dec  7 2017
-Start time: 02:48:39 on Dec 25,2023
+Start time: 09:50:51 on Dec 25,2023
 vlog -work work ./design/multiply.v ./design/testbench.v -l vcompile.txt 
 -- Compiling module multiply
 -- Compiling module tb
 
 Top level modules:
 	tb
-End time: 02:48:39 on Dec 25,2023, Elapsed time: 0:00:00
+End time: 09:50:51 on Dec 25,2023, Elapsed time: 0:00:00
 Errors: 0, Warnings: 0
 ```
 ### 3.2 *Simulation Report*<p align="right">**Errors: 0, Warnings: 0**</p>
 ```
 # vsim -voptargs="+acc" work.tb -l ./vsim.txt -wlf ./vsim.wlf 
-# Start time: 02:48:39 on Dec 25,2023
+# Start time: 09:50:51 on Dec 25,2023
 # ** Note: (vsim-8009) Loading existing optimized design _opt2
 # //  ModelSim SE-64 10.7 Dec  7 2017
 # //
@@ -525,7 +525,6 @@ Errors: 0, Warnings: 0
 # //
 # Loading work.tb(fast)
 # Loading work.multiply(fast)
-#  ------ERROR. A mismatch has occurred-----,ERROR in           0
 #  ------ERROR. A mismatch has occurred-----,ERROR in           1
 #  ------ERROR. A mismatch has occurred-----,ERROR in           2
 #  ------ERROR. A mismatch has occurred-----,ERROR in           3
@@ -556,24 +555,13 @@ Errors: 0, Warnings: 0
 #  ------ERROR. A mismatch has occurred-----,ERROR in          28
 #  ------ERROR. A mismatch has occurred-----,ERROR in          29
 #  ------ERROR. A mismatch has occurred-----,ERROR in          30
-#  ------ERROR. A mismatch has occurred-----,ERROR in          31
-#  ------ERROR. A mismatch has occurred-----,ERROR in          32
-#  ------ERROR. A mismatch has occurred-----,ERROR in          33
-#  ------ERROR. A mismatch has occurred-----,ERROR in          34
-#  ------ERROR. A mismatch has occurred-----,ERROR in          35
-#  ------ERROR. A mismatch has occurred-----,ERROR in          36
-#  ------ERROR. A mismatch has occurred-----,ERROR in          37
-#  ------ERROR. A mismatch has occurred-----,ERROR in          38
-#  ------ERROR. A mismatch has occurred-----,ERROR in          39
-#  ------ERROR. A mismatch has occurred-----,ERROR in          40
-# 41 ERROR! See log above for details.
+# 30 ERROR! See log above for details.
 # quit
-# End time: 02:48:39 on Dec 25,2023, Elapsed time: 0:00:00
+# End time: 09:50:51 on Dec 25,2023, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
 ```
 ### 3.3 *TestBench Report*
 ```
- ------ERROR. A mismatch has occurred-----,ERROR in           0
  ------ERROR. A mismatch has occurred-----,ERROR in           1
  ------ERROR. A mismatch has occurred-----,ERROR in           2
  ------ERROR. A mismatch has occurred-----,ERROR in           3
@@ -604,15 +592,5 @@ Errors: 0, Warnings: 0
  ------ERROR. A mismatch has occurred-----,ERROR in          28
  ------ERROR. A mismatch has occurred-----,ERROR in          29
  ------ERROR. A mismatch has occurred-----,ERROR in          30
- ------ERROR. A mismatch has occurred-----,ERROR in          31
- ------ERROR. A mismatch has occurred-----,ERROR in          32
- ------ERROR. A mismatch has occurred-----,ERROR in          33
- ------ERROR. A mismatch has occurred-----,ERROR in          34
- ------ERROR. A mismatch has occurred-----,ERROR in          35
- ------ERROR. A mismatch has occurred-----,ERROR in          36
- ------ERROR. A mismatch has occurred-----,ERROR in          37
- ------ERROR. A mismatch has occurred-----,ERROR in          38
- ------ERROR. A mismatch has occurred-----,ERROR in          39
- ------ERROR. A mismatch has occurred-----,ERROR in          40
-41 ERROR! See log above for details.
+30 ERROR! See log above for details.
 ```
