@@ -1,6 +1,6 @@
 ---
 title: Multiply
-date: 2023-12-25 10:06:04
+date: 2023-12-28 01:53:19
 tags:
 ---
 ---
@@ -459,12 +459,12 @@ module tb;
 		#500;
 		if (cnt == 0)
 		begin
-			// $display("Simulation finished Successfully.");
+			$display("Simulation finished Successfully.");
 			$fdisplay(fd, "Simulation finished Successfully.");
 		end
 		else if (cnt >= 1)
 		begin	
-			// $display("%0d ERROR! See log above for details.",cnt);
+			$display("%0d ERROR! See log for details.",cnt);
 			$fdisplay(fd, "%0d ERROR! See log above for details.",cnt) ;
 		end
 		$fclose(fd);
@@ -478,7 +478,7 @@ module tb;
 		begin
 		if ( product !== Data_in_t || product == 64'Bz )
 			begin
-			$display(" ------ERROR. A mismatch has occurred-----,ERROR in ", i);
+			// $display(" ------ERROR. A mismatch has occurred-----,ERROR in ", i);
 			$fdisplay(fd," ------ERROR. A mismatch has occurred-----,ERROR in ", i);
 			errors[i-1] =  1;
 			cnt = cnt + 1;
@@ -495,20 +495,20 @@ endmodule
 ### 3.1 *Compile Report*<p align="right">**Errors: 0, Warnings: 0**</p>
 ```
 Model Technology ModelSim SE-64 vlog 10.7 Compiler 2017.12 Dec  7 2017
-Start time: 10:06:03 on Dec 25,2023
+Start time: 01:53:18 on Dec 28,2023
 vlog -work work ./design/multiply.v ./design/testbench.v -l vcompile.txt 
 -- Compiling module multiply
 -- Compiling module tb
 
 Top level modules:
 	tb
-End time: 10:06:03 on Dec 25,2023, Elapsed time: 0:00:00
+End time: 01:53:18 on Dec 28,2023, Elapsed time: 0:00:00
 Errors: 0, Warnings: 0
 ```
 ### 3.2 *Simulation Report*<p align="right">**Errors: 0, Warnings: 0**</p>
 ```
 # vsim -voptargs="+acc" work.tb -l ./vsim.txt -wlf ./vsim.wlf 
-# Start time: 10:06:04 on Dec 25,2023
+# Start time: 01:53:18 on Dec 28,2023
 # ** Note: (vsim-3813) Design is being optimized due to module recompilation...
 # //  ModelSim SE-64 10.7 Dec  7 2017
 # //
@@ -525,38 +525,9 @@ Errors: 0, Warnings: 0
 # //
 # Loading work.tb(fast)
 # Loading work.multiply(fast)
-#  ------ERROR. A mismatch has occurred-----,ERROR in           1
-#  ------ERROR. A mismatch has occurred-----,ERROR in           2
-#  ------ERROR. A mismatch has occurred-----,ERROR in           3
-#  ------ERROR. A mismatch has occurred-----,ERROR in           4
-#  ------ERROR. A mismatch has occurred-----,ERROR in           5
-#  ------ERROR. A mismatch has occurred-----,ERROR in           6
-#  ------ERROR. A mismatch has occurred-----,ERROR in           7
-#  ------ERROR. A mismatch has occurred-----,ERROR in           8
-#  ------ERROR. A mismatch has occurred-----,ERROR in           9
-#  ------ERROR. A mismatch has occurred-----,ERROR in          10
-#  ------ERROR. A mismatch has occurred-----,ERROR in          11
-#  ------ERROR. A mismatch has occurred-----,ERROR in          12
-#  ------ERROR. A mismatch has occurred-----,ERROR in          13
-#  ------ERROR. A mismatch has occurred-----,ERROR in          14
-#  ------ERROR. A mismatch has occurred-----,ERROR in          15
-#  ------ERROR. A mismatch has occurred-----,ERROR in          16
-#  ------ERROR. A mismatch has occurred-----,ERROR in          17
-#  ------ERROR. A mismatch has occurred-----,ERROR in          18
-#  ------ERROR. A mismatch has occurred-----,ERROR in          19
-#  ------ERROR. A mismatch has occurred-----,ERROR in          20
-#  ------ERROR. A mismatch has occurred-----,ERROR in          21
-#  ------ERROR. A mismatch has occurred-----,ERROR in          22
-#  ------ERROR. A mismatch has occurred-----,ERROR in          23
-#  ------ERROR. A mismatch has occurred-----,ERROR in          24
-#  ------ERROR. A mismatch has occurred-----,ERROR in          25
-#  ------ERROR. A mismatch has occurred-----,ERROR in          26
-#  ------ERROR. A mismatch has occurred-----,ERROR in          27
-#  ------ERROR. A mismatch has occurred-----,ERROR in          28
-#  ------ERROR. A mismatch has occurred-----,ERROR in          29
-#  ------ERROR. A mismatch has occurred-----,ERROR in          30
+# 30 ERROR! See log for details.
 # quit
-# End time: 10:06:04 on Dec 25,2023, Elapsed time: 0:00:00
+# End time: 01:53:19 on Dec 28,2023, Elapsed time: 0:00:01
 # Errors: 0, Warnings: 0
 ```
 ### 3.3 *TestBench Report*
