@@ -1,6 +1,6 @@
 ---
 title: Multiply
-date: 2024-01-26 16:20:42
+date: 2024-01-26 16:24:51
 tags:
 ---
 ---
@@ -493,20 +493,20 @@ endmodule
 ### 3.1 *Compile Report*<p align="right">**Errors: 0, Warnings: 0**</p>
 ```
 Model Technology ModelSim SE-64 vlog 10.7 Compiler 2017.12 Dec  7 2017
-Start time: 16:20:41 on Jan 26,2024
+Start time: 16:24:51 on Jan 26,2024
 vlog -work work ./design/testbench.v ./design/updated_design_0.v -l vcompile.txt 
 -- Compiling module tb
 -- Compiling module multiply
 
 Top level modules:
 	tb
-End time: 16:20:41 on Jan 26,2024, Elapsed time: 0:00:00
+End time: 16:24:51 on Jan 26,2024, Elapsed time: 0:00:00
 Errors: 0, Warnings: 0
 ```
 ### 3.2 *Simulation Report*<p align="right">**Errors: 0, Warnings: 0**</p>
 ```
 # vsim -voptargs="+acc" work.tb -l ./vsim.txt -wlf ./vsim.wlf 
-# Start time: 16:20:41 on Jan 26,2024
+# Start time: 16:24:51 on Jan 26,2024
 # ** Note: (vsim-8009) Loading existing optimized design _opt2
 # //  ModelSim SE-64 10.7 Dec  7 2017
 # //
@@ -525,7 +525,7 @@ Errors: 0, Warnings: 0
 # Loading work.multiply(fast)
 # Simulation finished Successfully.
 # quit
-# End time: 16:20:42 on Jan 26,2024, Elapsed time: 0:00:01
+# End time: 16:24:51 on Jan 26,2024, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
 ```
 ### 3.3 *TestBench Report*
